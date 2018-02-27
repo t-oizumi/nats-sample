@@ -1,0 +1,28 @@
+version: '3'
+services:
+  nats_a:
+    hostname: nats_a
+    image: nats-streaming:latest
+    volumes:
+      - ./conf/nats/a:/tmp
+    ports:
+      - 7244:7244
+    tty: true
+  publisher:
+    hostname: publisher
+    build: publisher
+    working_dir: '/go/src/web'
+    volumes:
+      - ./publisher:/go/src/web
+    links:
+      - nats_a
+    tty: true
+  subscriber:
+    hostname: subscriber
+    build: subscriber
+    working_dir: '/go/src/web'
+    volumes:
+      - ./subscriber:/go/src/web
+    links:
+      - nats_a
+    tty: true
