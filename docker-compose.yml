@@ -2,11 +2,11 @@ version: '3'
 services:
   nats_a:
     hostname: nats_a
-    image: nats-streaming:latest
+    build: nats_a
+    working_dir: '/go/src/web'
+    # command: nats-streaming-server -store file -dir datastore -ft_group "ft" -cluster  nats://nats_a:6222 -routes nats://nats_a:6223 -p 4222
     volumes:
-      - ./conf/nats/a:/tmp
-    ports:
-      - 7244:7244
+      - ./nats_a:/go/src/web
     tty: true
   publisher:
     hostname: publisher
@@ -23,6 +23,15 @@ services:
     working_dir: '/go/src/web'
     volumes:
       - ./subscriber:/go/src/web
+    links:
+      - nats_a
+    tty: true
+  partner:
+    hostname: partner
+    build: partner
+    working_dir: '/go/src/web'
+    volumes:
+      - ./partner:/go/src/web
     links:
       - nats_a
     tty: true
